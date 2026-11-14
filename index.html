@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MASTER ALL VIDEO DOWNLOADER</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<meta name="theme-color" content="#0e2a2d">
+<style>
+:root{--bg:#0e2a2d;--panel:#16393d;--ink:#eef3ee;--mute:#9db5b3;--acc:#f2c14e;--acc-ink:#1b1500;--bad:#ff8a7a;--line:#2a5256}
+:root[data-t=light]{--bg:#eef2ef;--panel:#fff;--ink:#102022;--mute:#58706e;--acc:#0e6b73;--acc-ink:#fff;--bad:#b3261e;--line:#cdd9d6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:640px;margin:auto;padding:16px}header{display:flex;align-items:center;gap:8px;justify-content:space-between}
+h1{font-size:1.05rem;letter-spacing:.02em;margin:0}h2{font-size:1rem;margin:24px 0 8px}
+button,input{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 14px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.pri{background:var(--acc);color:var(--acc-ink);border:0;font-weight:700}.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
+.card img{width:100%;border-radius:10px;max-height:220px;object-fit:cover}.q{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--acc);width:0}
+.mute{color:var(--mute);font-size:.88rem}.err{color:var(--bad)}.item{border-top:1px solid var(--line);padding:10px 0}.item:first-child{border:0}
+a.save{color:var(--acc);font-weight:700}small{display:block;margin-top:24px}
+</style></head><body><main>
+<header><h1>MASTER ALL VIDEO DOWNLOADER</h1><div class="row"><button id="th" aria-label="Theme">◐</button><button id="lg">বাংলা</button></div></header>
+<h2 data-i="paste">Paste a video link</h2>
+<div class="row"><input id="u" type="url" placeholder="https://" inputmode="url"><button class="pri" id="an" data-i="analyze">Analyze</button></div>
+<div id="msg" class="mute" role="status"></div><div id="res"></div>
+<h2 data-i="dl">Downloads</h2><div id="q" class="card"><span class="mute" data-i="none">No downloads yet.</span></div>
+<h2 data-i="hist">History</h2><div id="h" class="card"></div>
+<div class="row" style="margin-top:10px"><button id="pin" data-i="pin">Private history PIN</button><button id="clr" data-i="clear">Clear history</button></div>
+<small class="mute" data-i="note">Free for everyone. No ads. No account needed. Download only what you have the right to save.</small>
+<small class="mute">About: MASTER ALL VIDEO DOWNLOADER · 100% free, 100% ad-free.</small>
+</main><script>
+const $=s=>document.querySelector(s),L={en:{paste:"Paste a video link",analyze:"Analyze",dl:"Downloads",none:"No downloads yet.",hist:"History",pin:"Private history PIN",clear:"Clear history",note:"Free for everyone. No ads. No account needed. Download only what you have the right to save.",audio:"Audio only",cancel:"Cancel",save:"Save file",busy:"Reading link…",setpin:"Set a PIN (empty removes it)",askpin:"Enter PIN to view history",locked:"History is locked."},
+bn:{paste:"ভিডিওর লিংক পেস্ট করুন",analyze:"বিশ্লেষণ",dl:"ডাউনলোড",none:"এখনও কোনো ডাউনলোড নেই।",hist:"ইতিহাস",pin:"ব্যক্তিগত PIN",clear:"ইতিহাস মুছুন",note:"সবার জন্য বিনামূল্যে। কোনো বিজ্ঞাপন নেই। অ্যাকাউন্ট লাগে না। যা সংরক্ষণের অধিকার আছে শুধু তাই ডাউনলোড করুন।",audio:"শুধু অডিও",cancel:"বাতিল",save:"ফাইল সংরক্ষণ",busy:"লিংক পড়া হচ্ছে…",setpin:"PIN দিন (খালি দিলে মুছে যাবে)",askpin:"ইতিহাস দেখতে PIN দিন",locked:"ইতিহাস লক করা আছে।"}};
+let lang=localStorage.lg||"en",unlocked=false;const t=k=>L[lang][k];
+const hash=s=>{let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
+const hist=()=>{try{return JSON.parse(localStorage.hist||"[]")}catch{return[]}};
+function tr(){document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));$("#lg").textContent=lang=="en"?"বাংলা":"EN";document.documentElement.lang=lang;if($("#q").children.length>1)$("#q .mute[data-i]")?.remove();rh()}
+function rh(){const h=$("#h");if(localStorage.pin&&!unlocked){h.innerHTML=`<span class="mute">${t("locked")}</span> <button id="un">PIN</button>`;$("#un").onclick=()=>{if(hash(prompt(t("askpin"))||"")==localStorage.pin){unlocked=true;rh()}};return}
+h.innerHTML=hist().map(x=>`<div class="item">${esc(x.title)}<div class="mute">${esc(x.when)}</div></div>`).join("")||`<span class="mute">—</span>`}
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("#lg").onclick=()=>{lang=lang=="en"?"bn":"en";localStorage.lg=lang;tr()};
+$("#th").onclick=()=>{const r=document.documentElement;r.dataset.t=r.dataset.t=="light"?"dark":"light";localStorage.th=r.dataset.t};
+document.documentElement.dataset.t=localStorage.th||"dark";
+$("#pin").onclick=()=>{const p=prompt(t("setpin"));if(p===null)return;if(p)localStorage.pin=hash(p);else delete localStorage.pin;unlocked=!localStorage.pin;rh()};
+$("#clr").onclick=()=>{localStorage.hist="[]";rh()};
+const api=async(p,b)=>{const r=await fetch(p,b&&{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.detail||r.status);return j};
+let info=null;
+$("#an").onclick=async()=>{const url=$("#u").value.trim();if(!url)return;$("#msg").textContent=t("busy");$("#msg").className="mute";$("#res").innerHTML="";
+ try{info=await api("/api/analyze",{url});$("#msg").textContent="";
+  $("#res").innerHTML=`<div class="card">${info.thumbnail?`<img alt="" src="${esc(info.thumbnail)}">`:""}<p>${esc(info.title)}</p><div class="q">${info.qualities.map(q=>`<button data-f="${esc(q.format_id)}">${q.height}p</button>`).join("")}<button data-a="1">${t("audio")}</button></div></div>`;
+  $("#res").querySelectorAll("button").forEach(b=>b.onclick=()=>start(url,b.dataset.f,!!b.dataset.a,info.title))}
+ catch(e){$("#msg").textContent=e.message;$("#msg").className="err"}};
+async function start(url,format_id,audio_only,title){try{const j=await api("/api/download",{url,format_id,audio_only,title});$("#q .mute[data-i]")?.remove();
+ const d=document.createElement("div");d.className="item";d.innerHTML=`<div>${esc(title)}</div><div class="bar"><i></i></div><span class="s mute">0%</span> <button class="c">${t("cancel")}</button>`;$("#q").prepend(d);
+ d.querySelector(".c").onclick=()=>api(`/api/job/${j.id}/cancel`,{});
+ const iv=setInterval(async()=>{try{const s=await api("/api/job/"+j.id);d.querySelector("i").style.width=s.progress+"%";const st=d.querySelector(".s");st.textContent=s.status=="running"?s.progress+"%":s.status;
+  if(s.status!="running"){clearInterval(iv);d.querySelector(".c").remove();if(s.status=="done"){st.innerHTML=`<a class="save" href="/api/file/${j.id}" download>${t("save")}</a>`;const h=hist();h.unshift({title,when:new Date().toLocaleString()});localStorage.hist=JSON.stringify(h.slice(0,100));rh()}else if(s.error){st.textContent=s.error;st.className="s err"}}}catch(e){clearInterval(iv)}},1000)}
+ catch(e){$("#msg").textContent=e.message;$("#msg").className="err"}}
+const p=new URLSearchParams(location.search).get("u");if(p){$("#u").value=p}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});tr();
+</script></body></html>
